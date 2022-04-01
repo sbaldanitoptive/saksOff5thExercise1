@@ -1,5 +1,5 @@
 const development = {
-  database: 'market-api',
+  database: 'marketapi',
   username: 'root',
   password: 'root',
   host: 'localhost',
