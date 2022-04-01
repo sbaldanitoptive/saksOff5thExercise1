@@ -13,8 +13,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt-nodejs": "^0.0.3",
     "express": "^4.17.3",
     "morgan": "^1.10.0",
+    "mysql2": "^2.3.3",
     "sequelize": "^6.17.0"
   },
   "devDependencies": {
