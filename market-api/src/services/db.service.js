@@ -6,7 +6,7 @@ const dbService = (environment, migrate) => {
 
   const dropDB = () => database.drop();
 
-  const syncDB = () => {};
+  const syncDB = () => database.sync();
 
   const syncAssociations = () => asyncAssociations();
 

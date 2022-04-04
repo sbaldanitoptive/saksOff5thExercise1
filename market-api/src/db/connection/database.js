@@ -22,6 +22,7 @@ switch (process.env.NODE_ENV) {
         define: {
           timestamps: false,
         },
+        logging: connection.development.logging,
       }
     );
 }

@@ -22,6 +22,9 @@ const User = sequelize.define(
     password: {
       type: Sequelize.STRING,
     },
+    role: {
+      type: Sequelize.STRING,
+    },
   },
   { hooks, tableName }
 );

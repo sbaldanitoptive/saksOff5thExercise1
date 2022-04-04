@@ -5,6 +5,7 @@ const development = {
   host: 'localhost',
   dialect: 'mysql',
   port: process.env.DB_PORT || 3306,
+  logging: true,
   migrationStorage: 'sequelize',
   migrationStorageTableName: 'migrations',
   seederStorage: 'sequelize',
