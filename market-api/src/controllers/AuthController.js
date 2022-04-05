@@ -17,8 +17,13 @@ function AuthController() {
       }
       const { password: userPassword, ...userNoPassword } = user.toJSON();
       if (bcryptService().comparePassword(password, userPassword)) {
-        const token = authService().issue({ id: user.id });
-        return res.status(200).json({ token, user: userNoPassword });
+        const token = authService().issue({ id: user.id, role: user.role });
+        return res
+          .cookie('access_token', token, {
+            httpOnly: true,
+          })
+          .status(200)
+          .json({ user: userNoPassword });
       }
 
       return res.status(401).json({ msg: 'Unauthorized' });
@@ -28,8 +33,18 @@ function AuthController() {
     }
   };
 
+  const authData = (req, res) => {
+    return res.status(200).json({ user: req.loggedUser });
+  };
+
+  const logout = (req, res) => {
+    return res.clearCookie('access_token').status(200).send();
+  };
+
   return {
     login,
+    authData,
+    logout,
   };
 }
 

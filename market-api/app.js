@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
-var logger = require('morgan');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
 
 const config = require('./src/config/');
 const dbService = require('./src/services/db.service');
+const authMiddleware = require('./src/policies/auth.policy');
 const AuthController = require('./src/controllers/AuthController');
 
 app.use(
@@ -13,25 +15,32 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
+// Establish connection with Database
 const environment = process.env.NODE_ENV || 'development';
+const DB = dbService(environment, config.migrate).start();
 
+// Define routes and controllers
 app.get('/', function (req, res) {
   // TODO: Add default view
   res.send('Hello World');
 });
 
+// Auth flow routes
 app.post('/login', AuthController.login);
+app.get('/auth-data', authMiddleware, AuthController.authData);
+app.get('/logout', authMiddleware, AuthController.logout);
 
-app.get('/products', (req, res) => {});
+// List/Create Products routes
+app.get('/products', authMiddleware, (req, res) => {});
+app.post('/products', authMiddleware, (req, res) => {});
+app.post('/products-import', authMiddleware, (req, res) => {});
 
-app.post('/products', (req, res) => {});
+// Create Orders routes
+app.post('/orders', authMiddleware, (req, res) => {});
 
-app.post('/orders', (req, res) => {});
-
-// TODO: Define all Models, migrations and seeds
-const DB = dbService(environment, config.migrate).start();
-
+// Spin up server
 app.listen(config.port, () => {
   console.log('app listening on port:', config.port);
   return DB;
