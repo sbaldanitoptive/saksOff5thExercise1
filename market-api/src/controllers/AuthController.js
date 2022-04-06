@@ -2,7 +2,55 @@ const User = require('../models/User');
 const authService = require('../services/auth.service');
 const bcryptService = require('../services/bcrypt.service');
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Login:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *       properties:
+ *         email:
+ *           type: string
+ *           example: fullcustomer@email.com
+ *         password:
+ *           type: string
+ *           example: fullcustomer
+ * tags:
+ *   - name: Login
+ *     description: Login Form
+ */
+
 function AuthController() {
+  /**
+   * @swagger
+   * /:
+   *   get:
+   *     description: Returns the homepage
+   *     responses:
+   *       200:
+   *         description: hello world
+   */
+
+  /**
+   * @swagger
+   * /login:
+   *   post:
+   *     description: Login to the application
+   *     tags: [Login]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *        application/json:
+   *          schema:
+   *            $ref: '#/components/schemas/Login'
+   *     responses:
+   *       200:
+   *         schema:
+   *           type: object
+   */
   const login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
