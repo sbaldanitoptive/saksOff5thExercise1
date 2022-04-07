@@ -1,3 +1,6 @@
+const { Readable } = require('stream');
+const csv = require('csv-parser');
+
 const Product = require('../models/Product');
 const Image = require('../models/Image');
 const { CATEGORY } = require('../helpers/types');
@@ -51,6 +54,21 @@ function ProductController() {
    *  get:
    *    description: Fetch a list of Products
    *    tags: [Products]
+   *    parameters:
+   *     - in: query
+   *       name: page
+   *       schema:
+   *        type: integer
+   *        default: 0
+   *     - in: query
+   *       name: category
+   *       schema:
+   *        type: string
+   *        enum:
+   *          - OTHER
+   *          - SHOES
+   *          - FURNITURE
+   *          - HANDBAGS
    *    responses:
    *     200:
    *       description: Products list array
@@ -60,7 +78,17 @@ function ProductController() {
    *             $ref: '#/components/schemas/ArrayOfProduct'
    */
   const getAll = async (req, res) => {
-    const allProducts = await Product.findAll({ include: Image });
+    const { pageSize = 20, page = 0, category = '' } = req.query;
+    const whereClauses = { isActive: true };
+    if (category) {
+      whereClauses.category = category;
+    }
+    const allProducts = await Product.findAll({
+      where: whereClauses,
+      include: Image,
+      limit: pageSize,
+      offset: page * pageSize,
+    });
     return res.status(200).json({ products: allProducts });
   };
 
@@ -103,9 +131,52 @@ function ProductController() {
     return res.status(200).send();
   };
 
+  /**
+   * @swagger
+   * /products-import:
+   *   post:
+   *     description: Import Products from CSV file
+   *     tags: [Products]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *        multipart/form-data:
+   *          schema:
+   *            type: object
+   *            properties:
+   *              file:
+   *                type: string
+   *                format: binary
+   *     responses:
+   *       200:
+   *         schema:
+   *           type: object
+   */
+  const bulkImport = async (req, res) => {
+    if (!req.files || !req.files.file) {
+      return res.status(400).send('No files were uploaded.');
+    }
+    try {
+      const { file } = req.files;
+      const stream = Readable.from(file.data.toString());
+      const products = await new Promise((resolve) => {
+        const rows = [];
+        stream
+          .pipe(csv())
+          .on('data', (data) => rows.push(data))
+          .on('end', () => resolve(rows));
+      });
+      await Promise.all(products.map((product) => Product.create(product)));
+      return res.status(200).send();
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  };
+
   return {
     getAll,
     create,
+    bulkImport,
   };
 }
 

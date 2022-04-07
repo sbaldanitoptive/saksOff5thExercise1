@@ -50,7 +50,7 @@ app.get('/logout', authMiddleware, AuthController.logout);
 // List/Create Products routes
 app.get('/products', authMiddleware, ProductController.getAll);
 app.post('/products', authMiddleware, ProductController.create);
-app.post('/products-import', authMiddleware, (req, res) => {});
+app.post('/products-import', authMiddleware, ProductController.bulkImport);
 app.post('/images', authMiddleware, ImageController.create);
 
 // Create Orders routes
