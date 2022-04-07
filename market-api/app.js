@@ -1,7 +1,9 @@
+global.appRoot = __dirname;
 const express = require('express');
 const app = express();
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
+const fileUpload = require('express-fileupload');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
@@ -10,6 +12,7 @@ const dbService = require('./src/services/db.service');
 const authMiddleware = require('./src/policies/auth.policy');
 const AuthController = require('./src/controllers/AuthController');
 const ProductController = require('./src/controllers/ProductController');
+const ImageController = require('./src/controllers/ImageController');
 
 app.use(
   logger(
@@ -19,6 +22,9 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(fileUpload());
+// Serve static files from storage/ dir
+app.use(express.static('storage'));
 
 // Set up Swagger for API Documentation
 // Ref: https://swagger.io/docs/specification/about/
@@ -45,6 +51,7 @@ app.get('/logout', authMiddleware, AuthController.logout);
 app.get('/products', authMiddleware, ProductController.getAll);
 app.post('/products', authMiddleware, ProductController.create);
 app.post('/products-import', authMiddleware, (req, res) => {});
+app.post('/images', authMiddleware, ImageController.create);
 
 // Create Orders routes
 app.post('/orders', authMiddleware, (req, res) => {});

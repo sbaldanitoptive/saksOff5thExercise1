@@ -43,7 +43,7 @@ function AuthController() {
    *     requestBody:
    *       required: true
    *       content:
-   *        application/json:
+   *        multipart/form-data:
    *          schema:
    *            $ref: '#/components/schemas/Login'
    *     responses:
@@ -85,6 +85,16 @@ function AuthController() {
     return res.status(200).json({ user: req.loggedUser });
   };
 
+  /**
+   * @swagger
+   * /logout:
+   *   get:
+   *     description: Logout from the application
+   *     tags: [Login]
+   *     responses:
+   *       200:
+   *         description: OK
+   */
   const logout = (req, res) => {
     return res.clearCookie('access_token').status(200).send();
   };
