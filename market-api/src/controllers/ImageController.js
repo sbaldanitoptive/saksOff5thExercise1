@@ -1,7 +1,5 @@
 const Image = require('../models/Image');
-const crypto = require('crypto');
-const config = require('../config');
-const { resizeImage } = require('../helpers/imageUtils');
+const { storeImage } = require('../helpers/imageUtils');
 
 /**
  *  @swagger
@@ -79,29 +77,20 @@ function ImageController() {
     if (!file.mimetype.includes('image')) {
       return res.status(400).send('No files of type image were uploaded.');
     }
-    const sourcePath = file.tempFilePath;
-    const imageName = crypto.randomBytes(20).toString('hex');
-    const [fileExtension] = file.name.split('.').slice(-1);
-    const uploadPath = config.uploadPathBase + `${imageName}.${fileExtension}`;
-    return resizeImage({
-      sourcePath,
-      destinationPath: uploadPath,
-      callback: async (err) => {
-        if (err) {
-          return res.status(500).send(err);
-        }
-        const { productId } = req.body;
-
-        const url = `http://localhost:${config.port}/${imageName}.${fileExtension}`;
-        await Image.create({
-          url,
-          width,
-          height,
-          productId,
-        });
-        return res.status(200).send();
-      },
-    });
+    try {
+      const { url, width, height } = await storeImage({ imageFile: file });
+      const { productId } = req.body;
+      await Image.create({
+        url,
+        width,
+        height,
+        productId,
+      });
+      return res.status(200).send();
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send(error);
+    }
   };
 
   return {

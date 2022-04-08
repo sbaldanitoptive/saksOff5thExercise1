@@ -4,6 +4,7 @@ const csv = require('csv-parser');
 const Product = require('../models/Product');
 const Image = require('../models/Image');
 const { CATEGORY } = require('../helpers/types');
+const { storeImage } = require('../helpers/imageUtils');
 
 /**
  *  @swagger
@@ -39,6 +40,9 @@ const { CATEGORY } = require('../helpers/types');
  *          category:
  *            type: string
  *            example: OTHER
+ *          image:
+ *            type: string
+ *            format: binary
  *      ArrayOfProduct:
  *        type: array
  *        items:
@@ -119,7 +123,7 @@ function ProductController() {
       isActive = true,
       category = CATEGORY.OTHER,
     } = req.body;
-    await Product.create({
+    const product = await Product.create({
       SKU,
       price,
       inventory,
@@ -128,6 +132,18 @@ function ProductController() {
       isActive,
       category,
     });
+    if (req.files.image) {
+      const { url, width, height } = await storeImage({
+        imageFile: req.files.image,
+      });
+      const productId = product.id;
+      await Image.create({
+        url,
+        width,
+        height,
+        productId,
+      });
+    }
     return res.status(200).send();
   };
 

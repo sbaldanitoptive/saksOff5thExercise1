@@ -1,8 +1,8 @@
 const config = {
   migrate: false,
+  hostname: process.env.HOSTNAME || 'localhost',
   port: process.env.PORT || '8080',
-  socketPort: process.env.SOCKETPORT || '4000',
-  uploadPathBase: global.appRoot + '/storage/',
+  storagePathBase: global.appRoot + '/storage/',
 };
 
 module.exports = config;

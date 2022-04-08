@@ -51,6 +51,7 @@ app.get('/logout', authMiddleware, AuthController.logout);
 app.get('/products', authMiddleware, ProductController.getAll);
 app.post('/products', authMiddleware, ProductController.create);
 app.post('/products-import', authMiddleware, ProductController.bulkImport);
+app.get('/images', authMiddleware, ImageController.getAll);
 app.post('/images', authMiddleware, ImageController.create);
 
 // Create Orders routes

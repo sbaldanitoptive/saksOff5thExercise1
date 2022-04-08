@@ -2,6 +2,12 @@
 
 ---
 
+## Software Requirements
+
+- NodeJS version 16.13.0
+- mysql-server
+- imagemagick
+
 ## Setup
 
 - Create database
