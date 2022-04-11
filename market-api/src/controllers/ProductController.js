@@ -1,5 +1,5 @@
-const { Readable } = require('stream');
 const csv = require('csv-parser');
+const fs = require('fs');
 
 const Product = require('../models/Product');
 const Image = require('../models/Image');
@@ -132,7 +132,7 @@ function ProductController() {
       isActive,
       category,
     });
-    if (req.files.image) {
+    if (req.files && req.files.image) {
       const { url, width, height } = await storeImage({
         imageFile: req.files.image,
       });
@@ -174,10 +174,9 @@ function ProductController() {
     }
     try {
       const { file } = req.files;
-      const stream = Readable.from(file.data.toString());
       const products = await new Promise((resolve) => {
         const rows = [];
-        stream
+        fs.createReadStream(file.tempFilePath)
           .pipe(csv())
           .on('data', (data) => rows.push(data))
           .on('end', () => resolve(rows));
@@ -185,6 +184,7 @@ function ProductController() {
       await Promise.all(products.map((product) => Product.create(product)));
       return res.status(200).send();
     } catch (error) {
+      console.error(error);
       return res.status(500).send(error);
     }
   };

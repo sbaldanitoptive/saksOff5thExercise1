@@ -25,9 +25,11 @@ module.exports = {
       },
     ]);
 
-    const users = await queryInterface.sequelize.query(`SELECT id from users;`);
+    const users = await queryInterface.sequelize.query(
+      `SELECT id FROM users WHERE email='fullcustomer@email.com';`
+    );
 
-    const fullCustomer = users[0];
+    const fullCustomer = users[0][0];
 
     await queryInterface.bulkInsert('addresses', [
       {
@@ -64,8 +66,8 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('users', null, {});
-    await queryInterface.bulkDelete('addresses', null, {});
     await queryInterface.bulkDelete('cards', null, {});
+    await queryInterface.bulkDelete('addresses', null, {});
+    await queryInterface.bulkDelete('users', null, {});
   },
 };
