@@ -13,6 +13,7 @@ const authMiddleware = require('./src/policies/auth.policy');
 const AuthController = require('./src/controllers/AuthController');
 const ProductController = require('./src/controllers/ProductController');
 const ImageController = require('./src/controllers/ImageController');
+const OrderController = require('./src/controllers/OrderController');
 
 app.use(
   logger(
@@ -30,7 +31,8 @@ app.use(express.static('storage'));
 // Ref: https://swagger.io/docs/specification/about/
 const swaggerDocument = require('./swagger.json');
 const specs = swaggerJsdoc(swaggerDocument);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+const apiDocsRoute = '/api-docs';
+app.use(apiDocsRoute, swaggerUi.serve, swaggerUi.setup(specs));
 
 // Establish connection with Database
 const environment = process.env.NODE_ENV || 'development';
@@ -54,11 +56,16 @@ app.post('/products-import', authMiddleware, ProductController.bulkImport);
 app.get('/images', authMiddleware, ImageController.getAll);
 app.post('/images', authMiddleware, ImageController.create);
 
-// Create Orders routes
-app.post('/orders', authMiddleware, (req, res) => {});
+// List/Create Orders routes
+app.get('/orders', authMiddleware, OrderController.getAll);
+app.post('/orders', authMiddleware, OrderController.create);
 
 // Spin up server
 app.listen(config.port, () => {
   console.log('app listening on port:', config.port);
+  console.log(
+    'API Docs are available at:',
+    `http://${config.hostname}:${config.port}${apiDocsRoute}`
+  );
   return DB;
 });
