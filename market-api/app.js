@@ -31,6 +31,7 @@ app.use(express.static('storage'));
 app.set('views', __dirname + '/src/views');
 app.set('view engine', 'jsx');
 app.engine('jsx', require('express-react-views').createEngine());
+app.use(express.static('assets'));
 
 // Setup Swagger for API Documentation
 // Ref: https://swagger.io/docs/specification/about/
@@ -47,6 +48,7 @@ const DB = dbService(environment, config.migrate).start();
 const routesMiddleware = authMiddleware(false);
 const routes = require('./src/routes');
 app.get('/', routesMiddleware, routes.index);
+app.get('/products-list', routesMiddleware, routes.productsList);
 
 const apiMiddleware = authMiddleware(true);
 // Auth flow routes

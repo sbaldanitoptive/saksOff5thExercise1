@@ -92,8 +92,11 @@ function ProductController() {
       include: Image,
       limit: pageSize,
       offset: page * pageSize,
+      order: [['id', 'DESC']],
     });
-    return res.status(200).json({ products: allProducts });
+    return res
+      ? res.status(200).json({ products: allProducts })
+      : allProducts.map((p) => p.toJSON());
   };
 
   /**

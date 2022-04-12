@@ -74,8 +74,7 @@ function AuthController() {
           .cookie('access_token', token, {
             httpOnly: true,
           })
-          .status(200)
-          .json({ user: userNoPassword });
+          .redirect('/');
       }
 
       return res.status(401).json({ msg: 'Unauthorized' });
@@ -100,7 +99,7 @@ function AuthController() {
    *         description: OK
    */
   const logout = (req, res) => {
-    return res.clearCookie('access_token').status(200).send();
+    return res.clearCookie('access_token').redirect('/');
   };
 
   return {
