@@ -27,7 +27,12 @@ app.use(fileUpload({ useTempFiles: true, tempFileDir: '/tmp/' }));
 // Serve static files from storage/ dir
 app.use(express.static('storage'));
 
-// Set up Swagger for API Documentation
+// Setup view engine
+app.set('views', __dirname + '/src/views');
+app.set('view engine', 'jsx');
+app.engine('jsx', require('express-react-views').createEngine());
+
+// Setup Swagger for API Documentation
 // Ref: https://swagger.io/docs/specification/about/
 const swaggerDocument = require('./swagger.json');
 const specs = swaggerJsdoc(swaggerDocument);
@@ -39,33 +44,31 @@ const environment = process.env.NODE_ENV || 'development';
 const DB = dbService(environment, config.migrate).start();
 
 // Define routes and controllers
-app.get('/', function (req, res) {
-  // TODO: Add default view
-  res.send('Hello World');
-});
+const routesMiddleware = authMiddleware(false);
+const routes = require('./src/routes');
+app.get('/', routesMiddleware, routes.index);
 
+const apiMiddleware = authMiddleware(true);
 // Auth flow routes
 app.post('/login', AuthController.login);
-app.get('/auth-data', authMiddleware, AuthController.authData);
-app.get('/logout', authMiddleware, AuthController.logout);
+app.get('/auth-data', apiMiddleware, AuthController.authData);
+app.get('/logout', apiMiddleware, AuthController.logout);
 
 // List/Create Products routes
-app.get('/products', authMiddleware, ProductController.getAll);
-app.post('/products', authMiddleware, ProductController.create);
-app.post('/products-import', authMiddleware, ProductController.bulkImport);
-app.get('/images', authMiddleware, ImageController.getAll);
-app.post('/images', authMiddleware, ImageController.create);
+app.get('/products', apiMiddleware, ProductController.getAll);
+app.post('/products', apiMiddleware, ProductController.create);
+app.post('/products-import', apiMiddleware, ProductController.bulkImport);
+app.get('/images', apiMiddleware, ImageController.getAll);
+app.post('/images', apiMiddleware, ImageController.create);
 
 // List/Create Orders routes
-app.get('/orders', authMiddleware, OrderController.getAll);
-app.post('/orders', authMiddleware, OrderController.create);
+app.get('/orders', apiMiddleware, OrderController.getAll);
+app.post('/orders', apiMiddleware, OrderController.create);
 
 // Spin up server
 app.listen(config.port, () => {
-  console.log('app listening on port:', config.port);
-  console.log(
-    'API Docs are available at:',
-    `http://${config.hostname}:${config.port}${apiDocsRoute}`
-  );
+  const appUrl = `http://${config.hostname}:${config.port}`;
+  console.log('app serving at:', appUrl);
+  console.log('API Docs are available at:', `${appUrl}${apiDocsRoute}`);
   return DB;
 });

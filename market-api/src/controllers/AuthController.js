@@ -65,7 +65,11 @@ function AuthController() {
       }
       const { password: userPassword, ...userNoPassword } = user.toJSON();
       if (bcryptService().comparePassword(password, userPassword)) {
-        const token = authService().issue({ id: user.id, role: user.role });
+        const token = authService().issue({
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        });
         return res
           .cookie('access_token', token, {
             httpOnly: true,
