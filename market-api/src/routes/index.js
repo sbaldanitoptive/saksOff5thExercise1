@@ -26,3 +26,11 @@ exports.productsList = async function (req, res) {
     selectedCategory: category,
   });
 };
+
+exports.postOrder = function (req, res) {
+  const loggedUser = req.loggedUser;
+  mainProps.user = loggedUser;
+
+  const { success = 'true' } = req.query;
+  res.render('postOrder', { ...mainProps, success: JSON.parse(success) });
+};

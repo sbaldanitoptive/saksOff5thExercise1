@@ -22,7 +22,10 @@ function DefaultLayout(props) {
           </Container>
         </Navbar>
         <Container className="p-3">
-          <Container className="p-5 mb-4 bg-light rounded-3">
+          <Container
+            className="mb-4 bg-light rounded-3"
+            style={{ padding: '3rem 15rem' }}
+          >
             {props.children}
           </Container>
         </Container>

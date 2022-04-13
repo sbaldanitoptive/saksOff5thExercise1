@@ -86,6 +86,12 @@ function ProductsList(props) {
                       type="hidden"
                       value={props.user.id}
                     />
+                    <input
+                      id="fromWeb"
+                      name="fromWeb"
+                      type="hidden"
+                      value={true}
+                    />
                     <Button variant="primary" type="submit">
                       Buy Now!
                     </Button>

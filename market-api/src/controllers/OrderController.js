@@ -88,6 +88,7 @@ function OrderController() {
       userId,
       paymentCardId = null,
       shippingAddressId = null,
+      fromWeb = false,
     } = req.body;
 
     // Determine paymentCard from request params or
@@ -96,13 +97,15 @@ function OrderController() {
       ? await Card.findByPk(paymentCardId)
       : await Card.findOne({ where: { userId } });
     if (!paymentCard || paymentCard.userId != userId) {
-      return res
-        .status(401)
-        .send(
-          paymentCardId
-            ? 'Invalid Payment Card Id'
-            : 'User has no Payment Card associated'
-        );
+      return !fromWeb
+        ? res
+            .status(401)
+            .send(
+              paymentCardId
+                ? 'Invalid Payment Card Id'
+                : 'User has no Payment Card associated'
+            )
+        : res.redirect('/post-order?success=false');
     }
 
     // Determine shippingAddress from request params or
@@ -111,13 +114,15 @@ function OrderController() {
       ? await Address.findByPk(shippingAddressId)
       : await Address.findOne({ where: { userId } });
     if (!shippingAddress || shippingAddress.userId != userId) {
-      return res
-        .status(401)
-        .send(
-          shippingAddressId
-            ? 'Invalid Shipping Address Id'
-            : 'User has no Address associated'
-        );
+      return !fromWeb
+        ? res
+            .status(401)
+            .send(
+              shippingAddressId
+                ? 'Invalid Shipping Address Id'
+                : 'User has no Address associated'
+            )
+        : res.redirect('/post-order?success=false');
     }
 
     // Create new order and decrement product inventory in a single transaction
@@ -138,7 +143,9 @@ function OrderController() {
       });
     });
 
-    return res.status(200).send();
+    return !fromWeb
+      ? res.status(200).send()
+      : res.redirect('/post-order?success=true');
   };
 
   return {
