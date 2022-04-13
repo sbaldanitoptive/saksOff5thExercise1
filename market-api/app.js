@@ -50,6 +50,8 @@ const routes = require('./src/routes');
 app.get('/', routesMiddleware, routes.index);
 app.get('/products-list', routesMiddleware, routes.productsList);
 app.get('/post-order', routesMiddleware, routes.postOrder);
+app.get('/create-products', routesMiddleware, routes.createProducts);
+app.get('/post-product', routesMiddleware, routes.postProduct);
 
 const apiMiddleware = authMiddleware(true);
 // Auth flow routes

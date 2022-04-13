@@ -9,7 +9,15 @@ function MainPage(props) {
     <DefaultLayout {...props}>
       <h2 className="text-center mb-3">Available Views</h2>
       <ListGroup>
-        {props.user.role === ROLE.MERCHANDISER ? null : (
+        {props.user.role === ROLE.MERCHANDISER ? (
+          <ListGroup.Item
+            action
+            href="/create-products"
+            className="justify-content-space-between"
+          >
+            <span>Create Products</span>
+          </ListGroup.Item>
+        ) : (
           <ListGroup.Item
             action
             href="/products-list"

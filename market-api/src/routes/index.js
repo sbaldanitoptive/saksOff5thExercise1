@@ -34,3 +34,18 @@ exports.postOrder = function (req, res) {
   const { success = 'true' } = req.query;
   res.render('postOrder', { ...mainProps, success: JSON.parse(success) });
 };
+
+exports.createProducts = function (req, res) {
+  const loggedUser = req.loggedUser;
+  mainProps.user = loggedUser;
+
+  res.render('createProducts', { ...mainProps });
+};
+
+exports.postProduct = function (req, res) {
+  const loggedUser = req.loggedUser;
+  mainProps.user = loggedUser;
+
+  const { success = 'true' } = req.query;
+  res.render('postProduct', { ...mainProps, success: JSON.parse(success) });
+};

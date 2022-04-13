@@ -19,3 +19,5 @@
   `npm run seed`
 - Run server
   `npm run start`
+- Open Home Page at http://localhost:8080/
+- Or check API Docs at http://localhost:8080/api-docs/

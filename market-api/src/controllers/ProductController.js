@@ -123,9 +123,11 @@ function ProductController() {
       inventory = 0,
       deliveryTimeBusinessDaysMin = 0,
       deliveryTimeBusinessDaysMax = 0,
-      isActive = true,
+      isActive: isActive_ = false,
       category = CATEGORY.OTHER,
+      fromWeb = false,
     } = req.body;
+    const isActive = isActive_ == 'on' || isActive_;
     const product = await Product.create({
       SKU,
       price,
@@ -147,7 +149,7 @@ function ProductController() {
         productId,
       });
     }
-    return res.status(200).send();
+    return !fromWeb ? res.status(200).send() : res.redirect('/post-product');
   };
 
   /**
@@ -177,6 +179,7 @@ function ProductController() {
     }
     try {
       const { file } = req.files;
+      const { fromWeb = false } = req.body;
       const products = await new Promise((resolve) => {
         const rows = [];
         fs.createReadStream(file.tempFilePath)
@@ -185,10 +188,12 @@ function ProductController() {
           .on('end', () => resolve(rows));
       });
       await Promise.all(products.map((product) => Product.create(product)));
-      return res.status(200).send();
+      return !fromWeb ? res.status(200).send() : res.redirect('/post-product');
     } catch (error) {
       console.error(error);
-      return res.status(500).send(error);
+      return !fromWeb
+        ? res.status(500).send()
+        : res.redirect('/post-product?success=false');
     }
   };
 

@@ -8,7 +8,12 @@ function Login(props) {
     <DefaultLayout {...props}>
       <h1 className="text-center">Login</h1>
       <Container fluid className="p-3">
-        <Form action="/login" method="post" target="_self">
+        <Form
+          className="d-flex flex-column"
+          action="/login"
+          method="post"
+          target="_self"
+        >
           <Form.Group className="mb-3" controlId="email">
             <Form.Label>Email address</Form.Label>
             <Form.Control type="email" name="email" placeholder="Enter email" />
