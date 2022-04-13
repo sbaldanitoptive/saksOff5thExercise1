@@ -62,7 +62,7 @@ function ProductsList(props) {
                       height={128}
                       src={
                         product.Images[0]
-                          ? product.Images[0].url
+                          ? `/${product.Images[0].url.split('/')[3]}`
                           : '/img/default.png'
                       }
                     />
