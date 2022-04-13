@@ -19,5 +19,10 @@ exports.productsList = async function (req, res) {
 
   const products = await ProductController.getAll(req);
 
-  res.render('productsList', { ...mainProps, products });
+  const { category } = req.query;
+  res.render('productsList', {
+    ...mainProps,
+    products,
+    selectedCategory: category,
+  });
 };

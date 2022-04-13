@@ -7,13 +7,49 @@ const {
   Button,
   Image,
 } = require('react-bootstrap');
+const map = require('lodash/map');
 
 const DefaultLayout = require('./layouts/default');
+const { CATEGORY } = require('../helpers/types');
 
+// TODO: Add post-order route
 function ProductsList(props) {
   return (
     <DefaultLayout {...props}>
       <h2 className="text-center mb-3">Products</h2>
+      <Container fluid className="m-2">
+        <Row sm="auto" className="justify-content-start">
+          <Col className="align-items-center d-flex">
+            <span className="fw-bold">{'Category: '}</span>
+          </Col>
+          <Col>
+            <a
+              className={`btn text-capitalize ${
+                props.selectedCategory ? 'btn-secondary' : 'btn-outline-dark'
+              }`}
+              href={`/products-list`}
+              style={{ width: '100px' }}
+            >
+              {'All'}
+            </a>
+          </Col>
+          {map(CATEGORY, (category) => (
+            <Col key={category}>
+              <a
+                className={`btn text-capitalize ${
+                  props.selectedCategory !== category
+                    ? 'btn-secondary'
+                    : 'btn-outline-dark'
+                }`}
+                href={`/products-list?category=${category}`}
+                style={{ width: '100px' }}
+              >
+                {category.toLowerCase()}
+              </a>
+            </Col>
+          ))}
+        </Row>
+      </Container>
       <ListGroup>
         {props.products.map((product) => (
           <ListGroup.Item key={product.id}>
