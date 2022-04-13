@@ -1,8 +1,9 @@
 const development = {
-  database: 'marketapi',
+  database: 'saksproject',
   username: 'root',
-  password: 'root',
-  host: 'localhost',
+  password: 'my-secret-pw',
+  // host: 'localhost',
+  host: 'saks_database',
   dialect: 'mysql',
   port: process.env.DB_PORT || 3306,
   logging: false,

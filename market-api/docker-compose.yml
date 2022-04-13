@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  saks_node:
+    image: node:16.13.0
+    working_dir: /home/node/app
+    volumes:
+      - ./:/home/node/app
+    ports:
+      - 8080:8080
+    depends_on:
+      - saks_database
+    command: bash -c "npm install && ./wait-for-it.sh -t 0 saks_database:3307 -- npm run migrate && npm run seed && npm run start"
+    networks:
+      - saks-network
+
+  saks_database:
+    image: mysql:5.7.36
+    container_name: saks_database
+    ports:
+      - 3307:3306
+    volumes:
+      - ./db_data:/var/lib/mysql
+      # - ./db_scripts:/docker-entrypoint-initdb.d:ro
+    environment:
+      MYSQL_DATABASE: 'saksproject'
+      MYSQL_ROOT_PASSWORD: 'my-secret-pw'
+    networks:
+      - saks-network
+
+networks:
+  saks-network:
+    driver: bridge
