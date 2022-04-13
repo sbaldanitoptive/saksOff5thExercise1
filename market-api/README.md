@@ -4,9 +4,7 @@
 
 ## Software Requirements
 
-- NodeJS version 16.13.0
-- mysql-server
-- imagemagick
+- docker-compose
 
 ## Setup
 
@@ -25,3 +23,5 @@
 | fullcustomer@email.com  | fullcustomer  |
 | basiccustomer@email.com | basiccustomer |
 | admin@email.com         | admin         |
+
+### A fixture to import products is available at src/db/seeds/products.csv
