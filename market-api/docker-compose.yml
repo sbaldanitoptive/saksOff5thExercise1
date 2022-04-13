@@ -10,7 +10,7 @@ services:
       - 8080:8080
     depends_on:
       - saks_database
-    command: bash -c "npm install && ./wait-for-it.sh -t 0 saks_database:3307 -- npm run migrate && npm run seed && npm run start"
+    command: bash -c "npm install && ./wait-for-it.sh -t 0 saks_database:3306 -- npm run migrate && npm run seed && npm run start"
     networks:
       - saks-network
 
